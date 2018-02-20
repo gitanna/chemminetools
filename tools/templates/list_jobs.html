@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+
+{% block extra_headers %}
+<link rel="stylesheet" type="text/css" href="/static/admin/dt_bootstrap/dataTables.bootstrap.css">
+{% endblock %}
+
+{% block js_content %}
+<script type="text/javascript" src="/static/admin/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/admin/dt_bootstrap/dataTables.bootstrap.js"></script>
+<script type="text/javascript">
+	var oTable;
+	$(document).ready(function() {
+		$('.icon-trash').click(DeleteRow);
+		$("[data-toggle=tooltip]").tooltip();
+		oTable = $('#jobTable').dataTable( {
+			"bSort": false,
+			"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>"
+		} );
+	});
+
+function DeleteRow()
+{
+	var id = $(this).parents('tr').first().attr("id");
+	$.get("/tools/view_job/" + id + "/delete");
+	if (oTable){
+		nTr = $(this).closest("tr").get(0); 
+		oTable.fnDeleteRow( oTable.fnGetPosition( nTr ) ) ;
+	} else {
+		$(this).parents('tr').first().remove();
+	}
+}
+</script>
+{% endblock %} 
+
+{% block base_content %}
+<div class="row-fluid"> 
+<div class="span12">
+<h2>My Jobs</h2>
+</div>
+</div><!--/row--> 
+
+<div class="row-fluid">
+
+
+<div class="span12">
+{% if matches %}
+	<table id="jobTable" class="table table-striped">
+	<thead>
+	<tr>
+	<th>Application</th>
+	<th>Start time</th>
+	<th>Status</th>
+	<th>Options</th>
+	</tr>
+	</thead>
+	<tbody>
+	{% for job in matches %}
+		<tr id="{{job.id}}">
+		<td><a href="/tools/view_job/{{job.id}}/">{{job.application}}</a></td>
+		<td>{{job.start_time}}</td>
+		<td>{% if job.status == 0 %}Running<img src="/static/images/spinner.gif"/>{% endif %}{% if job.status == 1 %}Finished{% endif %}{% if job.status == 2 %}Failed{% endif %}</td>
+		<td>{% if job.status != 0 %}<i data-toggle="tooltip" placement="top" title="delete this job" class="icon-trash"></i>{% endif %}
+		</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+{% else %}
+<p>No jobs submitted.</p>
+{% endif %}
+</div>
+
+
+</div><!--/row-->
+{% endblock %}

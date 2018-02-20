@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+
+{% block js_content %}
+<script type="text/javascript">
+	var structures_loaded = false;
+	$(document).ready(function() {
+		$('.icon-trash').click(DeleteRow);
+		$("[data-toggle=tooltip]").tooltip();
+
+	$("#loadstructures").click(function () {
+		if (!structures_loaded) {
+			$(this).html('Hide Structures');
+			var buf = $(this).text();
+			$(".compoundImage").show();
+			$(".compoundImageTitle").show();
+			$(".compoundImage").each(function() {
+				$(this).html('<img width="150" class="img-rounded" src="/compounds/'+ $(this).attr('id')  + '/png"/>');
+			});
+			structures_loaded = true;
+		} else {
+			$(this).html('Show Structures');
+			structures_loaded = false;
+			$(".compoundImage").hide();
+			$(".compoundImageTitle").hide();
+			$(".compoundImage").each(function() {
+				$(this).html('');
+			});
+		}
+	});
+	});
+
+	function DeleteRow()
+	{
+		var compound_id = $(this).parents('tr').first().attr("id");
+		$.get("/compounds/" + compound_id + "/delete");
+		$(this).parents('tr').first().remove();
+		$("#counter").text(parseInt($("#counter").text()) - 1)
+	}
+</script>
+{% endblock %} 
+
+{% block base_content %}
+<div class="row-fluid"> 
+<div class="span12">
+<h2>My Compounds</h2>
+</div>
+</div><!--/row--> 
+
+<!-- Modal -->
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Are you sure?</h3>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete all of your compounds?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+<a href="deleteAll"><button class="btn btn-danger">Delete All</button></a>
+  </div>
+</div>
+
+<div class="row-fluid">
+	<div class="span12">
+		{% if matches %}
+			<table border="0">
+			<tr>
+			<td id="counter">{{p.count}}</td><td> compounds total</td>
+			</tr>
+			</table>
+		{% endif %}
+		<div class="btn-group">
+		  <a href="#deleteModal" role="button" class="btn btn-danger" data-toggle="modal">Delete All</a>
+		  <button id="loadstructures" class="btn">Show Structures</button>
+		  <a href="/myCompounds/downloadSDF.sdf" download="myCompounds.sdf"><button class="btn">Download SDF</button></a>
+		  <a href="/myCompounds/downloadSMILES.smi" download="myCompounds.smi"><button class="btn">Download Smiles</button></a>
+		</div>
+	</div> 
+</div><!--/row-->
+
+<div class="row-fluid">
+
+
+<div class="span12">
+{% if matches %}
+	<table class="table table-striped">
+	<thead>
+	<tr>
+	<th>CID</th>
+	<th>Name</th>
+	<th style="display:none" class="compoundImageTitle">Structure</th>
+	<th>Formula</th>
+	<th>Options</th>
+	</tr>
+	</thead>
+	<tbody>
+	{% for compound in matches %}
+		<tr id="{{compound.id}}">
+		<td><a href="/compounds/{{compound.id}}">{{compound.cid}}</a></td>
+		<td>{{compound.name}}</td>
+		<td style="display:none" class="compoundImage" id="{{compound.id}}">  </td>
+		<td>{{compound.formula}}</td>
+		<td><i data-toggle="tooltip" placement="top" title="delete this compound" class="icon-trash"></i>
+		<a href="/eisearch/query/?smi={{compound.smiles}}" class="searchRowButton" data-toggle="tooltip" placement="top" title="search similar compounds"><i class="icon-search"></i></a>
+		<a href="/compounds/{{compound.id}}/editform" class="editRowButton" data-toggle="tooltip" placement="top" title="edit compound details"><i class="icon-pencil"></i></a>
+		</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+	</table>
+{% else %}
+<p>No compounds uploaded.</p>
+{% endif %}
+</div>
+
+
+</div><!--/row-->
+<div class="row-fluid">
+	<div class="span12">
+		<div class="pagination pagination-centered">
+		<ul>
+		<li{% if not matches.has_previous %} class="disabled"{% endif %}><a href="?page={{matches.previous_page_number}}">Previous</a></li>
+		{% for page in p.page_range %}
+		<li{% if matches.number == page %} class="active"{% endif %}><a href="?page={{page}}">{{page}}</a></li>
+		{% endfor %}
+		<li{% if not matches.has_next %} class="disabled"{% endif %}><a href="?page={{matches.next_page_number}}">Next</a></li>
+		</ul>
+		</div>
+	</div> 
+</div><!--/row-->
+{% endblock %}

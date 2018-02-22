@@ -3,30 +3,38 @@ from django.shortcuts import redirect, render_to_response, render
 from django.http  import HttpResponse
 from django.template import RequestContext
 from guest.decorators import guest_allowed, login_required
-from drugbank.models import Drug_targets_org
+from drugbank.models import Drugtargets_distinct_org#,Drug_targets_org
 import json
 import operator
 from django.db.models import Q
 
-#
-# def drugbank_lookup(request):
-#     print '\n in lookup'
-#     context = {}
-#     return render_to_response('annotation_3.html',context,
-#                               context_instance=RequestContext(request))
 
 def drugbank_lookup(request):
     dict_page = {}
-    queryset = Drug_targets_org.objects.all()
-    print '\n resutls is ', queryset.query
-    results = get_results(queryset, 'id', request)
-    #showFields = ['ID','DID','PID','organism' ]
-    showFields = ['id','target_drugs','uniprot_id','organism']
+
+    try:
+        drugs = request.GET.get('druglist')
+    except:
+        drugs = request.POST.get('druglist')
+    druglist = []
+    if drugs:
+        str(drugs).split(",")
+        druglist = drugs.split(",")
+
+    if druglist:
+        queryset = Drugtargets_distinct_org.objects.filter(drugbank_id__in=druglist)
+        results = get_results(queryset, 'drugbank_id', request)
+    else:
+        queryset = Drugtargets_distinct_org.objects.all()
+        results = get_results(queryset, 'drugbank_id', request)
+
+    showFields = ['drugbank_id','drug_name','drug_type']#,'uniprot_id','uniprot_name']
 
     #dict_page['showFields'] = showFields
-    url = '/drugbank/?isajax=true'
+    url = '/drugbank/?isajax=true&druglist=' + drugs#DB02512,DB02511'
+
     c = {'showFields':showFields, 'url':url}
-    print '\c is ', c
+
     if 'isajax' in request.REQUEST:
         print '\n in ajax in process_table_data_for_json'#, ' and total is ', results['total']
         dict_page['total'] = results['total']
@@ -120,9 +128,10 @@ def get_rows(showFields, results, page_number, rows_number):
                 #if str(f) != 'id':  # todo:add more fields here
                 r_dict[f] = r.get_field(f)
             #r_dict['structure'] = '<img src="https://www.drugbank.ca/structures/DB02512/image.png" width="160" height="160">'
-            drugname = r_dict['target_drugs']
-            drugname =  'DB02512'
+            drugname = r_dict['drugbank_id']
+            #drugname =  'DB02512'
             r_dict['structure'] = '<img src="https://www.drugbank.ca/structures/' + drugname + '/image.png"  width="160" height="160">'
+            print '\n\n\n\n structure is for  ', drugname
             r_list.append(r_dict)
         print '\n list is ', r_list
         return r_list
@@ -359,3 +368,21 @@ def drugbank_lookup_1(request):
 #     pagination_nav = pagination_nav + "</ul></div>"
 #
   #  return pagination_nav
+
+# If
+# you
+# have ?students = 23, 24, 25, 26 in the
+# URL, then
+# you
+# want
+# students = request.GET.get('students')
+# instead
+# of
+# getlist.Then
+# convert
+# to
+# a
+# list
+# of
+# integers
+# with sd_list =[int(x) for x in students.split(',')

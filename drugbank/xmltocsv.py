@@ -47,3 +47,6 @@ for member in root.findall('Resident'):
 	csvwriter.writerow(resident)
 Resident_data.close()
 #http://blog.appliedinformaticsinc.com/how-to-parse-and-convert-xml-to-csv-using-python/
+# SELECT
+#     XMLPARSE(DOCUMENT convert_from(
+#         pg_read_binary_file('fulldatabase.xml'), 'UTF8'));

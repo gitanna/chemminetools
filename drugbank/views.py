@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render_to_response, render
 from django.http  import HttpResponse
 from django.template import RequestContext
 from guest.decorators import guest_allowed, login_required
-from drugbank.models import Drugtargets_distinct_org#,Drug_targets_org
+from drugbank.models import Drugtargets_distinct_org,Drugtargets_org
 import json
 import operator
 from django.db.models import Q
@@ -22,13 +22,18 @@ def drugbank_lookup(request):
         druglist = drugs.split(",")
 
     if druglist:
-        queryset = Drugtargets_distinct_org.objects.filter(drugbank_id__in=druglist)
+        #queryset = Drugtargets_distinct_org.objects.filter(drugbank_id__in=druglist)
+        queryset = Drugtargets_org.objects.filter(drugbank_id__in=druglist)
+
         results = get_results(queryset, 'drugbank_id', request)
     else:
-        queryset = Drugtargets_distinct_org.objects.all()
+        #queryset = Drugtargets_distinct_org.objects.all()
+        queryset = Drugtargets_org.objects.all()
         results = get_results(queryset, 'drugbank_id', request)
 
-    showFields = ['drugbank_id','drug_name','drug_type']#,'uniprot_id','uniprot_name']
+    #showFields = ['drugbank_id','drug_name','drug_type']#,'uniprot_id','uniprot_name']
+    showFields = ['drugbank_id','drug_name','drug_type','uniprot_id','uniprot_name']
+
 
     #dict_page['showFields'] = showFields
     url = '/drugbank/?isajax=true&druglist=' + drugs#DB02512,DB02511'
@@ -125,8 +130,8 @@ def get_rows(showFields, results, page_number, rows_number):
 
             for f in showFields:
                 print '\n field f is ',
-                #if str(f) != 'id':  # todo:add more fields here
-                r_dict[f] = r.get_field(f)
+                if str(f) != 'id':  # todo:add more fields here
+                    r_dict[f] = r.get_field(f)
             #r_dict['structure'] = '<img src="https://www.drugbank.ca/structures/DB02512/image.png" width="160" height="160">'
             drugname = r_dict['drugbank_id']
             #drugname =  'DB02512'

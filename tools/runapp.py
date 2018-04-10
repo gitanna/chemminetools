@@ -72,8 +72,11 @@ def launch(
                                    stdin=subprocess.PIPE)
     try:
         outs, errs = runningTask.communicate(input, timeout=(60 * 60 * 24 * 7)) # wait a week
+        outs, errs = runningTask.communicate(input)#, timeout=(60 * 60 * 24 * 7))  # wait a week
+        print '\n outs --', outs, ' errs --', errs
         return outputFileName
-    except:
+    except Exception as e:
+        print (e)
         runningTask.kill()
         return False
 

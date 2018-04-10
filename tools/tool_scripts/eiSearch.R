@@ -2,7 +2,6 @@
 # requires: ChemmineR,R.utils
 # use: ./eiSearch.R --outfile=output.txt --simCutoff=0.3 --numResults=10 < input.sdf
 
-print 'before libraries'
 library(eiR)
 library(R.utils)
 #library(RPostgreSQL)
@@ -17,17 +16,14 @@ library(R.utils)
 
 library(rzmq)
 
-print 'after rzmq'
 context = init.context()
 socket = init.socket(context,"ZMQ_REQ")
 connect.socket(socket,"tcp://localhost:5555")
-print 'after connect socket'
 sendQuery <- function(...){
         send.socket(socket,data=list(...))
         receive.socket(socket)
 }
 
-print 'after send query'
 if(! exists("debug_mode")){
 	# parse command line arguments
 	args = commandArgs(asValues=TRUE)

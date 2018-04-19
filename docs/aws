@@ -1,0 +1,22 @@
+AWS credentials:
+account #
+username
+password
+
+AWS instances:
+
+development - http://ec2-18-219-58-21.us-east-2.compute.amazonaws.comls 0
+Current server statistics:
+http://chemminedev.bioinfo.ucr.edu:8080/dashboard/#Chemmine Tools Load
+
+Installation scripts:
+
+/home/admin/scripts
+
+Access to the machines:
+
+ssh -i <key> admin@<aws instance>
+
+SSH is restricted to listed IPs
+
+Code repository: https://github.com/gitanna/chemminetools

@@ -1,0 +1,6 @@
+#!/bin/sh
+# For correct dependency resolution pip needs everything on a single line
+/usr/local/bin/pip install Django==1.4.5 django-guardian==1.1.1 ZSI==2.0-rc3 django-bootstrap-toolkit==2.8.0 \
+django-cms==2.3.5 South==0.7.5 django-appmedia==1.0.1 django-celery==3.0.11 simplejson==3.1.0 \
+ghostscript==0.4.1 PyYAML==3.10 django-userena==1.2.1 beautifulsoup4==4.3.2 celery==3.0.16 subprocess32
+

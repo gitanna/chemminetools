@@ -5,7 +5,9 @@ password
 
 AWS instances:
 
-development - http://ec2-18-219-58-21.us-east-2.compute.amazonaws.comls 0
+development - http://ec2-18-219-58-21.us-east-2.compute.amazonaws.com
+production - http://ec2-52-15-82-218.us-east-2.compute.amazonaws.com/
+
 Current server statistics:
 http://chemminedev.bioinfo.ucr.edu:8080/dashboard/#Chemmine Tools Load
 

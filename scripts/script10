@@ -1,0 +1,12 @@
+mkdir /tmp/compileOB
+cd /tmp/compileOB
+wget -O ob.tgz https://svwh.dl.sourceforge.net/project/openbabel/openbabel/2.3.2/openbabel-2.3.2.tar.gz
+tar xvfz ob.tgz
+mkdir build
+cd build
+cmake ../openbabel-2.3.2 -DPYTHON_BINDINGS=ON
+make -j2
+make install
+cd ~/
+rm -rf /tmp/compileOB
+echo "/usr/local/lib" > /usr/lib/python2.7/dist-packages/obabel.pth

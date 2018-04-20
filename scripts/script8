@@ -1,0 +1,8 @@
+# add sql commands to blank database
+cd /srv/chemminetools
+mkdir static_production
+python manage.py syncdb --noinput
+python manage.py migrate --noinput
+python manage.py collectstatic --noinput
+python manage.py check_permissions
+

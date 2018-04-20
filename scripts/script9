@@ -1,0 +1,56 @@
+#!/bin/sh
+# compile and install R
+apt-get install cmake
+mkdir /tmp/compileR
+cd /tmp/compileR
+wget http://cran.cnr.berkeley.edu/src/base/R-3/R-3.2.0.tar.gz
+tar xvfz R-3.2.0.tar.gz
+cd R-3.2.0
+
+#add this packages first before configure R
+sudo apt-get install build-essential
+sudo apt-get install fort77
+sudo apt-get install xorg-dev
+sudo apt-get install liblzma-dev  libblas-dev gfortran
+sudo apt-get install gcc-multilib
+sudo apt-get install gobjc++
+sudo apt-get install aptitude
+sudo aptitude install libreadline-dev
+apt-get install openjdk-7-jdk
+
+./configure
+make
+make check
+make info
+make install
+make install-info
+cd ~/ 
+rm -rf /tmp/compileR
+
+# install prereqs for building R packages
+apt-get install -y curl libcurl4-openssl-dev
+apt-get install -y libgsl0-dev libgsl0ldbl
+apt-get install -y libxml2 libxml2-dev 
+
+# compile and install openbabel
+mkdir /tmp/compileOB
+cd /tmp/compileOB
+wget -O ob.tgz https://svwh.dl.sourceforge.net/project/openbabel/openbabel/2.3.2/openbabel-2.3.2.tar.gz
+tar xvfz ob.tgz
+mkdir build
+cd build
+cmake ../openbabel-2.3.2 -DPYTHON_BINDINGS=ON
+make -j2
+make install
+cd ~/
+rm -rf /tmp/compileOB
+echo "/usr/local/lib" > /usr/lib/python2.7/dist-packages/obabel.pth
+
+# install R packages
+printf "source(\"http://bioconductor.org/biocLite.R\")
+biocLite()
+biocLite(c(\"ShortRead\", \"Biostrings\", \"IRanges\", \"BSgenome\", \"rtracklayer\", \"biomaRt\",
+\"BiocStyle\", \"gridExtra\", 
+\"ChemmineR\", \"fmcsR\", \"bioassayR\", \"cellHTS2\", \"RCurl\", \"ape\", \"eiR\", \"ChemmineOB\", \"rjson\"))
+" | R --slave
+

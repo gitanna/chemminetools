@@ -1,0 +1,5 @@
+# copy config file
+cd /srv/chemminetools
+cp chemminetools/settings_sample.py chemminetools/settings.py 
+# made changes to get it running: add in database settings and secret key
+

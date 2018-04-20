@@ -1,0 +1,8 @@
+Drugbank database:
+PostgreSQL
+
+Application:
+drugbank
+
+Dependecies:
+static/css/

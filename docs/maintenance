@@ -1,0 +1,17 @@
+Known issues and fixes on local server:
+
+Restart celery server if queing is clogged:
+
+/etc/init.d/celeryd restart
+
+celery logs:
+/var/log/celeryd/w1.log
+
+Restart eiSearch server if not working;
+
+/etc/init.d/eiSearch restart
+
+Restart messaging  broker if it cannot communicate with celery queing servicies:
+
+rabbitmqctl stop
+service rabbitmq-server start

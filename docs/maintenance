@@ -11,7 +11,15 @@ Restart eiSearch server if not working;
 
 /etc/init.d/eiSearch restart
 
-Restart messaging  broker if it cannot communicate with celery queing servicies:
+Restart messaging  broker if it cannot communicate with celery queing servicieas:
 
 rabbitmqctl stop
 service rabbitmq-server start
+
+For general checks:
+http://chemminedev.bioinfo.ucr.edu:8080/dashboard/#Chemmine
+
+linux top command
+
+celery log:
+/var/log/celeryd/w1.log

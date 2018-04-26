@@ -1,0 +1,5 @@
+#!/bin/sh
+# create postgresql database as postgres user
+sudo -u postgres createuser -U postgres cmt -w -S -R -d
+sudo -u postgres psql -U postgres -d postgres -c "alter user <name> with password <password>;"
+sudo -u postgres createdb -E utf8 -O cmt chemminetools -T template0 --locale=C.UTF-8
